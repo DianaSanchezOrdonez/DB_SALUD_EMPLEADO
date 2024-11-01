@@ -1,0 +1,28 @@
+-- Inserta los 1000 registros para edesempenio
+DO $$
+DECLARE
+    productividad_impacto INT;
+    satisfaccion_trabajo INT;
+    periodo TEXT;
+    empleado_id TEXT;
+BEGIN
+    -- Crea un cursor para obtener los IDs de la tabla Contrato
+    FOR empleado_id, periodo IN
+        SELECT c.empleado_id, c.periodo
+        FROM contrato c
+    LOOP
+        -- Generar valores aleatorios en la escala del -1 a 1
+        productividad_impacto := CASE
+            WHEN random() < 0.33 THEN -1
+            WHEN random() < 0.66 THEN 0
+            ELSE 1
+        END;
+
+        -- Generar valores aleatorios en la escala del 1 al 5
+        satisfaccion_trabajo := FLOOR(RANDOM() * 5) + 1;
+
+        -- Insertar en la tabla edesempenio
+        INSERT INTO edesempenio (codigo, productividad_impacto, satisfaccion_trabajo, empleado_id, periodo)
+        VALUES (DEFAULT, productividad_impacto, satisfaccion_trabajo, empleado_id, periodo);
+    END LOOP;
+END $$;

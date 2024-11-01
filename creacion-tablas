@@ -1,0 +1,78 @@
+-- Tabla Empleado
+CREATE TABLE Empleado (
+    empleado_id VARCHAR(20) PRIMARY KEY NOT NULL,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    genero varchar(20) NOT NULL,
+    anios_experiencia INT NOT NULL,
+    rating_equilibrio_vida_laboral INT NOT NULL,
+    num_reuniones_virtuales INT NOT NULL,
+    horas_trabajadas_por_semana DOUBLE PRECISION NOT NULL
+
+    CONSTRAINT chk_mayor_de_edad CHECK (DATE_PART('year', AGE(fecha_nacimiento)) >= 18),
+    CONSTRAINT chk_empleado_id CHECK (empleado_id LIKE 'EMP%'),
+    CONSTRAINT chk_genero CHECK (genero IN ('masculino', 'femenino', 'no mencionar')),
+    CONSTRAINT chk_experiencia CHECK (anios_experiencia >= 0),
+    CONSTRAINT chk_rating_vida_laboral CHECK (rating_equilibrio_vida_laboral BETWEEN 1 AND 5),
+    CONSTRAINT chk_reuniones_virtuales CHECK(num_reuniones_virtuales >= 0),
+    CONSTRAINT chk_horas_trabajadas_por_semana CHECK(horas_trabajadas_por_semana BETWEEN 20 AND 60)
+);
+
+-- Tabla Empresa
+CREATE TABLE Empresa (
+    empresa_id VARCHAR(20) PRIMARY KEY NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    industria VARCHAR(50) NOT NULL
+);
+
+-- Tabla Contrato
+CREATE TABLE Contrato (
+    empleado_id VARCHAR(20) NOT NULL,
+    empresa_id VARCHAR(20),
+    periodo VARCHAR(7) NOT NULL,
+    puesto_trabajo VARCHAR(50) NOT NULL,
+    modalidad_trabajo VARCHAR(10) NOT NULL,
+    PRIMARY KEY (empleado_id, periodo),
+
+    FOREIGN KEY (empresa_id) REFERENCES Empresa(empresa_id),
+    FOREIGN KEY (empleado_id) REFERENCES Empleado(empleado_id),
+
+    CONSTRAINT chk_periodo CHECK (periodo ~ '^\d{4}-(0[1-2])$'),
+    CONSTRAINT chk_modalidad_trabajo CHECK (modalidad_trabajo IN ('Remoto', 'Hibrido', 'Presencial'))
+);
+
+-- Tabla EDesempenio (Evaluación de Desempeño)
+CREATE TABLE EDesempenio (
+    codigo SERIAL PRIMARY KEY NOT NULL,
+    productividad_impacto INT NOT NULL, -- -1, 0, 1
+    satisfaccion_trabajo INT NOT NULL,
+    empleado_id VARCHAR(20) NOT NULL,
+    periodo VARCHAR(7) NOT NULL,
+
+    FOREIGN KEY (empleado_id) REFERENCES Empleado(empleado_id),
+    FOREIGN KEY (empleado_id, periodo) REFERENCES Contrato(empleado_id, periodo),
+
+    CONSTRAINT chk_productividad_impacto CHECK (productividad_impacto BETWEEN -1 AND 1),
+    CONSTRAINT chk_satisfaccion_trabajo CHECK (satisfaccion_trabajo BETWEEN 1 AND 5)
+);
+
+-- Tabla SaludMental
+CREATE TABLE SaludMental (
+    codigo SERIAL PRIMARY KEY NOT NULL,
+    rating_aislamiento_social INT NOT NULL,
+    freq_actividad_fisica INT NOT NULL,
+    calidad_suenio INT NOT NULL,
+    nivel_estres INT NOT NULL,
+    diagnostico VARCHAR(30) NOT NULL,
+    empleado_id VARCHAR(20) NOT NULL,
+    periodo VARCHAR(7) NOT NULL,
+
+    FOREIGN KEY (empleado_id) REFERENCES Empleado(empleado_id),
+    FOREIGN KEY (empleado_id, periodo) REFERENCES Contrato(empleado_id, periodo),
+
+    CONSTRAINT chk_rating_aislamiento_social CHECK (rating_aislamiento_social BETWEEN 1 AND 5),
+    CONSTRAINT chk_freq_actividad_fisica CHECK (freq_actividad_fisica BETWEEN 1 AND 5),
+    CONSTRAINT chk_calidad_suenio CHECK (calidad_suenio BETWEEN 1 AND 5),
+    CONSTRAINT chk_nivel_estres CHECK (nivel_estres BETWEEN 1 AND 5)
+);

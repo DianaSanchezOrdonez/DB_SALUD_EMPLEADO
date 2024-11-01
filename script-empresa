@@ -1,0 +1,89 @@
+-- Inserta 150 registros con nombres e industrias tecnológicas
+DO $$
+DECLARE
+    i INTEGER;
+    empresa_id VARCHAR(20);
+    empresa_nombre VARCHAR(50);
+    empresa_industria VARCHAR(50);
+    empresas TEXT[] := ARRAY[
+        'AMD', 'Adobe', 'AirTable', 'Airbnb', 'Airtable', 'Algolia',
+       'Alibaba', 'Amazon', 'AppDynamics', 'AppLovin', 'Apple', 'Asana',
+       'Atlassian', 'Basecamp', 'BetterCloud', 'BigCommerce', 'BigQuery',
+       'Bill.com', 'BlaBlaCar', 'Box', 'Buffer', 'Cado Security',
+       'Calendly', 'Chargebee', 'Cisco', 'CleverTap', 'ClickUp',
+       'Cloudflare', 'CoConstruct', 'CoSchedule', 'Cobalt', 'Contentful',
+       'Cortex', 'Cricut', 'Criteo', 'Cytobank', 'DataRobot',
+       'Databricks', 'Datadog', 'Dell', 'Dev.to', 'Discord', 'Domo',
+       'DoorDash', 'Dropbox', 'Elastic', 'Eventbrite', 'Expensify',
+       'Fieldwire', 'Figma', 'Fiverr', 'Forte', 'FreshBooks', 'Freshdesk',
+       'Freshsales', 'Freshworks', 'Fynd', 'GitHub', 'GitLab', 'Google',
+       'Google Workspace', 'Greenhouse', 'Grubhub', 'HP', 'HackerRank',
+       'Hootsuite', 'Huawei', 'HubSpot', 'HubSpot CRM', 'IBM', 'InVision',
+       'Insightly', 'Instacart', 'Integromat', 'Intel', 'Intercom',
+       'Intuit', 'Jira', 'Kaltura', 'Kashoo', 'Keap', 'Looker', 'Lucid',
+       'Lucidchart', 'Lyft', 'Mailchimp', 'Mailgun', 'Meta', 'Microsoft',
+       'Microsoft Dynamics', 'Microsoft Teams', 'Miro', 'Mixpanel',
+       'Monday.com', 'NVIDIA', 'NetSuite', 'Netflix', 'New Relic',
+       'Notion', 'Nutshell', 'Okta', 'Optimizely', 'Oracle',
+       'Oracle Cloud', 'Palantir', 'PandaDoc', 'Parabola', 'PatSnap',
+       'PayPal', 'Pendo', 'Periscope Data', 'Pinterest', 'Pipedrive',
+       'Plangrid', 'Pluralsight', 'Postman', 'Procore', 'Qualys',
+       'QuickBooks', 'Quora', 'Rally', 'Red Hat', 'Redfin', 'RingCentral',
+       'Riot Games', 'Rocket League', 'Roku', 'SAP', 'Salesflare',
+       'Salesforce', 'Samsara', 'Segment', 'SendGrid', 'Sentry',
+       'ServiceNow', 'Shopify', 'Slack', 'Smartsheet', 'Snap', 'Spotify',
+       'Square', 'Squarespace', 'Stripe', 'SugarCRM', 'Sumo Logic',
+       'Tableau', 'Tesla', 'TikTok', 'Todoist', 'Toggl', 'Trello',
+       'Tripadvisor', 'Twilio', 'Twitch', 'Twitter', 'Uber', 'Vercel',
+       'Wave', 'Waze', 'WeWork', 'Webflow', 'Wish', 'Workday', 'Wrike',
+       'Xero', 'Zalando', 'Zapier', 'Zillow', 'Zoho', 'Zoho CRM',
+       'Zoho One', 'Zoom'
+    ];
+    industrias TEXT[] := ARRAY[
+        'Internet Services', 'Consumer Electronics', 'Software Development',
+        'E-commerce', 'Information Technology Services', 'Social Media',
+        'Semiconductors', 'Database Management', 'Graphics Processing',
+        'Cloud Computing', 'Streaming Services', 'Cybersecurity',
+        'Mobile Applications', 'Software as a Service', 'Collaboration Tools',
+        'Content Management', 'Digital Marketing', 'E-learning',
+        'Online Payment Solutions', 'Data Analytics', 'AI and Machine Learning',
+        'Virtual Reality', 'Augmented Reality', 'Blockchain Technology',
+        'Remote Work Tools', 'Gaming', 'Artificial Intelligence',
+        'Internet of Things', 'Wearable Technology', 'Telecommunications',
+        'E-sports', 'Digital Payments', 'Health Tech', 'Biotechnology',
+        'EdTech', 'Logistics Technology', 'Agritech', 'Fintech',
+        'Legal Tech', 'PropTech', 'MarTech', 'Travel Tech',
+        'Food Tech', 'Green Tech', 'Retail Tech', 'Social Impact Tech',
+        'Fashion Tech', 'HR Tech', 'Creative Tech', 'Music Tech',
+        'Media Tech', 'Sports Tech', 'Insurance Tech', 'Real Estate Tech',
+        'Energy Tech', 'Transportation Tech', 'Robotics', 'Drones',
+        '5G Technology', 'Quantum Computing', 'Smart Cities', 'SaaS',
+        'PaaS', 'IaaS', 'Analytics', 'Voice Technology', 'Computer Vision',
+        'Natural Language Processing', 'Cloud Storage', 'API Management',
+        'Supply Chain Tech', 'Project Management Tools', 'Collaboration Software',
+        'Customer Relationship Management', 'Human Resource Management',
+        'Content Delivery Networks', 'Digital Signage', 'Podcasting',
+        'Live Streaming', 'Subscription Services', 'Mobile Gaming',
+        'E-learning Platforms', 'Online Courses', 'Digital Content Creation',
+        'E-commerce Platforms', 'B2B Marketplaces', 'B2C Marketplaces',
+        'Travel Booking', 'Real-time Analytics', 'Business Intelligence',
+        'Software Development Kits', 'Testing Tools', 'DevOps Tools',
+        'Integration Platforms', 'Security Solutions', 'Digital Identity',
+        'Collaboration Hardware', 'Smart Home', 'Smart Appliances',
+        'Tech Consulting', 'Technology Investment', 'Venture Capital',
+        'Startup Accelerators', 'Incubators', 'Hackathons'
+    ];
+BEGIN
+    FOR i IN 1..150 LOOP
+        -- Generar el empresa_id con el formato EMPRESA000000X
+        empresa_id := 'EMPRESA' || LPAD(i::TEXT, 7, '0');
+
+        -- Asegurarse de que los índices de los arrays son correctos
+        empresa_nombre := empresas[i];
+        empresa_industria := industrias[(i - 1) % array_length(industrias, 1) + 1];
+
+        -- Insertar en la tabla EMPRESA
+        INSERT INTO EMPRESA (empresa_id, nombre, industria)
+        VALUES (empresa_id, empresa_nombre, empresa_industria);
+    END LOOP;
+END $$;

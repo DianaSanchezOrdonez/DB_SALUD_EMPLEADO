@@ -1,0 +1,37 @@
+-- Inserta los 1000 registros para saludmental
+DO $$
+DECLARE
+    rating_aislamiento_social INT;
+    freq_actividad_fisica INT;
+    calidad_suenio INT;
+    nivel_estres INT;
+    diagnostico TEXT;
+    periodo TEXT;
+    empleado_id TEXT;
+BEGIN
+    -- Crea un cursor para obtener los IDs de la tabla Contrato
+    FOR empleado_id, periodo IN
+        SELECT c.empleado_id, c.periodo
+        FROM contrato c
+    LOOP
+        -- Generar valores aleatorios en la escala del 1 al 5
+        rating_aislamiento_social := FLOOR(RANDOM() * 5) + 1;
+        freq_actividad_fisica := FLOOR(RANDOM() * 5) + 1;
+        calidad_suenio := FLOOR(RANDOM() * 5) + 1;
+        nivel_estres := FLOOR(RANDOM() * 5) + 1;
+
+        -- Seleccionar un diagnóstico aleatorio
+        CASE FLOOR(RANDOM() * 4)
+            WHEN 0 THEN diagnostico := 'Ansiedad';
+            WHEN 1 THEN diagnostico := 'Depresion';
+            WHEN 2 THEN diagnostico := 'Burnout';
+            WHEN 3 THEN diagnostico := 'Saludable';
+        END CASE;
+
+
+        -- Insertar en la tabla saludmental
+        INSERT INTO SaludMental (codigo, rating_aislamiento_social, freq_actividad_fisica, calidad_suenio, nivel_estres, diagnostico, empleado_id, periodo)
+        VALUES (DEFAULT, rating_aislamiento_social, freq_actividad_fisica, calidad_suenio, nivel_estres, diagnostico, empleado_id, periodo);
+    END LOOP;
+END $$;
+

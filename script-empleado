@@ -1,0 +1,109 @@
+-- Inserta 1000 registros para empleados
+DO $$
+DECLARE
+    i INT;
+    j INT;
+    empleado_id TEXT;
+    nombre TEXT;
+    apellido TEXT;
+    fecha_nacimiento DATE;
+    genero TEXT;
+    anios_experiencia INT;
+    num_reuniones_virtuales INT;
+    rating_equilibrio_vida_laboral INT;
+    horas_trabajadas_por_semana INT;
+
+    nombres TEXT[] := ARRAY[
+    'Colby', 'Sergio', 'Nathaniel', 'Jeremy', 'Ahmed', 'Quinton', 'Yosef', 'Damon', 'Derick', 'Brayden', 'Everett', 'Tyler',
+    'Emmett', 'Alec', 'Zayne', 'Xzavier', 'Tyson', 'Darren', 'Louis', 'Carmelo', 'Ishaan', 'Jack', 'Jamie', 'Ibrahim',
+    'Jarrett', 'Darryl', 'Carlo', 'Jadyn', 'Kody', 'Frank', 'Asa', 'Jamison', 'Scott', 'Josue', 'Alfonso', 'Brooks',
+    'Beckett', 'Wyatt', 'Turner', 'Reagan', 'Sidney', 'Nikolai', 'Jayce', 'Keaton', 'Lorenzo', 'Larry', 'Cory', 'Marquise',
+    'Milo', 'Keegan', 'Messiah', 'Alessandro', 'Zaire', 'Carson', 'Santino', 'Sterling', 'Armani', 'Aden', 'Eugene', 'Angelo',
+    'Savion', 'Ernesto', 'Dax', 'Sonny', 'Felix', 'Trystan', 'Elijah', 'Ruben', 'Kayden', 'Finley', 'Reid', 'Lawrence',
+    'Oswaldo', 'Landin', 'Gael', 'Keagan', 'Dane', 'Tate', 'Gaven', 'Ryker', 'Drake', 'Weston', 'Grady', 'Davis',
+    'Brayan', 'Lewis', 'James', 'Braiden', 'Dexter', 'Andreas', 'Kian', 'Isaias', 'Branden', 'Malakai', 'Blaze', 'Jonah',
+    'Garrett', 'Raphael', 'Demarion', 'Nickolas', 'Leandro', 'Noe', 'Paxton', 'Dakota', 'Ray', 'Lennon', 'Nash', 'Vance',
+    'Connor', 'Chaz', 'Darwin', 'Darius', 'Matthew', 'Todd', 'Raymond', 'Emery', 'Khalil', 'Ernest', 'Lukas', 'Alvaro',
+    'Roberto', 'Humberto', 'Freddy', 'Johnathan', 'Talan', 'Gilberto', 'Jadiel', 'Damian', 'Lawson', 'Isai', 'Aryan',
+    'Mark', 'Chase', 'Liam', 'Matthias', 'Jalen', 'Devin', 'Jimmy', 'Carl', 'Carlos', 'Hayden', 'Layne', 'Landon',
+    'Kolten', 'Fisher', 'Immanuel', 'Camden', 'Chad', 'Wayne', 'Oliver', 'Braydon', 'Gary', 'Harrison', 'Armando',
+    'Marlon', 'Rodolfo', 'Chaim', 'Charlie', 'Fernando', 'Johnathon', 'Roland', 'Stanley', 'Valentin', 'Valentino',
+    'Leo', 'Emiliano', 'Kyle', 'Zachary', 'Jaydan', 'Juan', 'Santos', 'Russell', 'Tristin', 'Cyrus', 'Pierce',
+    'Asher', 'Sawyer', 'Kristopher', 'Rory', 'Jovanny', 'Timothy', 'Jabari', 'Brycen', 'Zack', 'Kelvin', 'August',
+    'Calvin', 'Tomas'
+    ];
+
+    apellidos TEXT[] := ARRAY[
+    'Chen', 'Li', 'Wang', 'Zhang', 'Liu', 'Yang', 'Huang', 'Zhao', 'Wu', 'Xu',
+    'Sun', 'Ma', 'Guo', 'Lin', 'He','Gao', 'Zheng', 'Xie', 'Tang', 'Jiang','Liang', 'Deng', 'Yu', 'Shen', 'Fang',
+    'Dai', 'Jin', 'Cai', 'Xiong', 'Luo','Sui', 'Peng', 'Song', 'Qian', 'Wang','Liao', 'Jiang', 'Yao', 'Ma', 'Zhang','He',
+    'Xuan', 'Tian', 'Wei', 'Xing', 'Zou','Hong', 'Xue', 'Rong', 'Bai', 'Jiang','Hu', 'Li', 'Fang', 'Cheng',
+    'Tao', 'Zhou', 'Yuan', 'Zeng', 'Kuang','Han', 'Ren', 'Wang', 'Feng', 'Zhou','Xiang', 'Ding', 'Zhu', 'Shang', 'Ding',
+    'Mo', 'Cao', 'Yang', 'Zheng', 'Huang','Qiu', 'Liang', 'Xing', 'Gong', 'Shen',
+    'Pan', 'Qin', 'Xu', 'Lu', 'Li','Bai', 'Xue', 'Yang', 'Zheng', 'Tan','Song', 'Huang', 'Mao', 'Xiao', 'Rong',
+    'Torres', 'Saldana', 'Valencia', 'Mendez', 'Navarro','Burke', 'Martinez', 'Gallardo', 'Gonzales', 'Cantu',
+    'Fowler', 'Morris', 'Becker', 'Cortez', 'Soto','Hernandez', 'Rivera', 'Moore', 'Olivares', 'Cisneros',
+    'Hodge', 'Salinas', 'Nunez', 'Pacheco', 'Pineda','Ferguson', 'Ramos', 'Hernandez', 'Valdez', 'Mendez',
+    'Harrison', 'Barraza', 'Castillo', 'Gil', 'Solano','Dixon', 'Shaw', 'Rodriguez', 'Bautista', 'Valerio',
+    'Collins', 'Dominguez', 'Jaramillo', 'Sierra', 'Rosario','Hernandez', 'Galvan', 'Morris', 'Salas', 'Rios',
+    'Sampson', 'Hernandez', 'Carrillo', 'Ortega', 'Carillo','Jenkins', 'Sanchez', 'Alvarez', 'Rangel', 'Black',
+    'Hernandez', 'Hodge', 'Hernandez', 'Gonzales', 'Craig','Bennett', 'Lopez', 'Vasquez', 'Reyes', 'Gonzalez',
+    'Wright', 'Meza', 'Cruz', 'Castaneda', 'Gonzalez','Ramos', 'Blackwell', 'Alvarado', 'Hernandez', 'Santos',
+    'Hernandez', 'Cervantes', 'López', 'Bermudez', 'Delgado'
+    ];
+    total_registros INT := 0;  -- Contador de registros insertados
+
+BEGIN
+    -- Generar combinaciones de nombres y apellidos
+    FOR i IN 1..array_length(nombres, 1) LOOP
+        FOR j IN 1..array_length(apellidos, 1) LOOP
+            IF total_registros >= 900 THEN
+                EXIT;  -- Salir del bucle si se alcanzó el límite
+            END IF;
+
+            -- Generar el empleado_id con el formato EMP000000X
+            empleado_id := 'EMP' || LPAD((i * array_length(apellidos, 1) + j + 9906)::TEXT, 7, '0');
+
+            -- Seleccionar nombres y apellidos
+            nombre := nombres[i];
+            apellido := apellidos[j];
+
+            -- Generar fecha de nacimiento aleatoria a partir de 1970
+            fecha_nacimiento := (DATE '1970-01-01' + (random() * (DATE '1998-12-31' - DATE '1970-01-01'))::INT);
+
+            -- Generar género aleatorio
+            genero := 'masculino';
+
+            -- Generar años de experiencia entre 1 y 35
+            anios_experiencia := 1 + (random() * 34)::INT;
+
+            -- Generar un número aleatorio de reuniones virtuales entre 0 y 15
+            num_reuniones_virtuales := floor(random() * 16)::INT;
+
+            -- Generar un rating de equilibrio vida laboral entre 1 y 5
+            rating_equilibrio_vida_laboral := floor(random() * 5) + 1;
+
+            -- Generar horas trabajadas por semana entre 20 y 60
+            horas_trabajadas_por_semana := floor(random() * 41) + 20;
+
+            -- Insertar en la tabla EMPLEADO
+            INSERT INTO EMPLEADO (empleado_id, nombres, apellidos, fecha_nacimiento, genero, anios_experiencia, rating_equilibrio_vida_laboral, num_reuniones_virtuales, horas_trabajadas_por_semana)
+            VALUES (empleado_id, nombre, apellido, fecha_nacimiento, genero, anios_experiencia, rating_equilibrio_vida_laboral, num_reuniones_virtuales, horas_trabajadas_por_semana);
+
+            -- Incrementar el contador de registros insertados
+            total_registros := total_registros + 1;
+        END LOOP;
+    END LOOP;
+END $$;
+
+-- NOTA: Modifica los ids de empleados que se alteraron despues de aplicar la combinatoria de nombres y apellidos
+-- WITH cte AS (
+--     SELECT
+--         empleado_id,  -- Suponiendo que 'id' es la clave primaria
+--         ROW_NUMBER() OVER (ORDER BY empleado_id) AS new_sequence
+--     FROM empleado
+-- )
+-- UPDATE empleado
+-- SET empleado_id = 'EMP' || LPAD(new_sequence::TEXT, 7, '0')
+-- FROM cte
+-- WHERE empleado.empleado_id = cte.empleado_id;

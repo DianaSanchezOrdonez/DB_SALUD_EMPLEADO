@@ -1,0 +1,67 @@
+-- Inserta los 1000 registros para contrato
+DO $$
+DECLARE
+    i INT;
+    periodo TEXT;
+    empleado_id TEXT;
+    empresa_id TEXT;
+    anio INT;  -- Año para el periodo
+    mes INT;   -- Mes para el periodo
+    modalidad_trabajo TEXT;
+    job TEXT;
+    techJobs TEXT[] := ARRAY [
+      'Software Engineer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer',
+      'Data Scientist', 'DevOps Engineer', 'Cloud Architect', 'Systems Administrator', 'Machine Learning Engineer',
+      'Database Administrator', 'IT Support Specialist', 'Security Analyst', 'Network Engineer', 'AI Researcher',
+      'Mobile App Developer', 'Product Manager', 'UI/UX Designer', 'Blockchain Developer', 'Cybersecurity Specialist',
+      'Solutions Architect', 'Data Analyst', 'Game Developer', 'Business Intelligence Analyst',
+      'Site Reliability Engineer', 'Quality Assurance Engineer', 'Technical Support Engineer', 'Technical Writer',
+      'Embedded Systems Engineer', 'Computer Vision Engineer', 'Web Developer', 'API Developer',
+      'Robotics Engineer', 'Software Architect', 'Big Data Engineer', 'Network Security Engineer',
+      'Cloud Engineer', 'Artificial Intelligence Engineer', 'Augmented Reality Developer', 'Virtual Reality Developer',
+      'IT Project Manager', 'Automation Engineer', 'Penetration Tester', 'CRM Developer',
+      'Data Engineer', 'Help Desk Technician', 'Solutions Engineer', 'IT Consultant',
+      'IoT Developer', 'Software Tester', 'Security Engineer', 'Database Engineer',
+      'IT Operations Manager', 'Cybersecurity Consultant', 'Digital Transformation Manager', 'Cloud Solutions Specialist',
+      'Systems Engineer', 'Mobile Architect', 'Data Warehouse Engineer', 'Application Developer',
+      'Cloud Consultant', 'Blockchain Analyst', 'User Researcher', 'Machine Learning Developer',
+      'Algorithm Developer', 'Data Operations Analyst', 'Tech Support Specialist', 'Cloud Infrastructure Engineer',
+      'DevSecOps Engineer', 'Information Systems Manager', 'Scrum Master', 'Firmware Engineer',
+      'Network Architect', 'Virtualization Engineer', 'IT Analyst', 'Chief Technology Officer (CTO)',
+      'Chief Information Officer (CIO)', 'Release Manager', 'ERP Developer', 'SAP Consultant',
+      'Front-End Architect', 'Digital Marketing Technologist', 'Technical Recruiter', 'Solutions Developer',
+      'Data Governance Analyst', 'Mobile Security Analyst', 'Cloud Security Engineer', 'AI Trainer',
+      'Tech Evangelist', 'IT Risk Analyst', 'IT Auditor', 'Mobile Product Manager',
+      'Infrastructure Engineer', 'Incident Response Analyst', 'Server Administrator', 'IT Trainer',
+      'Data Visualization Engineer', 'E-commerce Developer', 'Digital Forensics Analyst', 'Innovation Manager'
+    ];
+BEGIN
+    FOR i IN 1..9000 LOOP
+        empleado_id := 'EMP' || LPAD((i + 1000)::TEXT, 7, '0');
+
+        -- Generar empresa_id con un valor aleatorio entre 1 y 150
+        empresa_id := 'EMPRESA' || LPAD((FLOOR(RANDOM() * 150) + 1)::TEXT, 7, '0');
+
+        -- Generar mes aleatorio (1 o 2 para semestral)
+        mes := (FLOOR(RANDOM() * 2) + 1); -- Mes 1 o 2 (representando el primer semestre)
+
+        -- Generar año aleatorio entre 2000 y 2024
+        anio := FLOOR(RANDOM() * 25) + 2000;  -- 2000 a 2024
+
+        -- Formatear el período
+        periodo := anio || '-' || LPAD(mes::TEXT, 2, '0');
+
+        job := techJobs[(i % array_length(techJobs, 1)) + 1];
+
+        -- Elegir aleatoriamente una modalidad de trabajo
+        modalidad_trabajo := CASE
+            WHEN random() < 0.33 THEN 'Hibrido'
+            WHEN random() < 0.66 THEN 'Remoto'
+            ELSE 'Presencial'
+        END;
+
+        -- Insertar en la tabla contrato
+        INSERT INTO contrato (empleado_id, empresa_id, periodo, puesto_trabajo, modalidad_trabajo)
+        VALUES (empleado_id, empresa_id, periodo, job, modalidad_trabajo);
+    END LOOP;
+END $$;
