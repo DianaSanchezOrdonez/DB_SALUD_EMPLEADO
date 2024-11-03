@@ -47,3 +47,8 @@ La base de datos está modelada en Postgres y se compone de las siguientes entid
    - `diagnostico`: Diagnóstico de salud mental.
    - `empleado_id`: Identificador del empleado (relación con la colección Empleado).
    - `periodo`: Periodo evaluado.
+
+## Integrantes del Proyecto
+
+- **Robert Junior Buleje del Carpio**
+- **Diana Sanchez Ordóñez**
