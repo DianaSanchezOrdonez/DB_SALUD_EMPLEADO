@@ -48,6 +48,15 @@ La base de datos está modelada en Postgres y se compone de las siguientes entid
    - `empleado_id`: Identificador del empleado (relación con la colección Empleado).
    - `periodo`: Periodo evaluado.
 
+## Backups 
+En la carpeta `backups` se encuentran las bases de datos utilizadas para las pruebas de optimización. Cada archivo está nombrado según el volumen de registros insertados: `100`, `1 000`, `10 000` y `100 000`.
+
+Para restaurar cualquiera de estas bases de datos, utiliza el siguiente comando, ajustando el nombre de la base de datos y la ubicación del archivo dump:
+
+```
+psql -U postgres -h localhost -d nombre-de-la-bd -f ubicacion-archivo-dump
+```
+
 ## Integrantes del Proyecto
 
 - **Robert Junior Buleje del Carpio**
